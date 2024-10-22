@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:clo2/themes/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'pages/home_page.dart';
 
 void main() {
@@ -30,6 +31,13 @@ class Clo2App extends StatelessWidget {
 class AppContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+      ),
+    );
+    
     return Container(
       color: AppTheme.backgroundColor,
       child: DefaultTextStyle(
@@ -37,7 +45,10 @@ class AppContainer extends StatelessWidget {
           fontFamily: 'Roboto',
           fontSize: 16,
         ),
-        child: HomePage(),
+        child: SafeArea(
+          top: true,
+          child: HomePage(),
+        )
       ),
     );
   }
