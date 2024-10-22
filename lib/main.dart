@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'pages/home_page.dart';
 
+import 'package:clo2/components/drawer.dart' as D;
+
 void main() {
   runApp(Clo2App());
 }
@@ -29,7 +31,27 @@ class Clo2App extends StatelessWidget {
   }
 }
 
-class AppContainer extends StatelessWidget {
+class AppContainer extends StatefulWidget {
+  @override
+  AppContainerState createState() => AppContainerState();
+}
+
+class AppContainerState extends State<AppContainer> {
+  bool drawerVisible = false;
+  toggleDrawer() {
+    this.setState(() {
+      drawerVisible = !drawerVisible;
+    });
+  }
+
+  Widget? drawerContent;
+
+  updateDrawer(Widget? newContent) {
+    this.setState(() {
+      this.drawerContent = newContent;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
@@ -39,14 +61,19 @@ class AppContainer extends StatelessWidget {
       ),
     );
 
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
     return Container(
       color: AppTheme.backgroundColor,
       child: DefaultTextStyle(
-          style: const TextStyle(
-            fontFamily: 'Roboto',
-            fontSize: 16,
-          ),
-          child: SafeArea(
+        style: const TextStyle(
+          fontFamily: 'Roboto',
+          fontSize: 16,
+        ),
+        child: Stack(
+          children: [
+            SafeArea(
               top: true,
               child: Navigator(
                 pages: [
@@ -58,7 +85,21 @@ class AppContainer extends StatelessWidget {
                   }
                   return true;
                 },
-              ))),
+              ),
+            ),
+            if (this.drawerVisible)
+              Container(
+                width: screenWidth,
+                height: screenHeight,
+                decoration: BoxDecoration(color: Color(0x7F383838)),
+              ),
+            D.Drawer(
+              isDrawerVisible: this.drawerVisible,
+              child: this.drawerContent,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

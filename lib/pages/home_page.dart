@@ -2,6 +2,7 @@ import 'package:clo2/components/carousel_card.dart';
 import 'package:clo2/components/filter_bar.dart';
 import 'package:clo2/components/home_header.dart';
 import 'package:clo2/components/suggestion_card.dart';
+import 'package:clo2/main.dart';
 import 'package:clo2/themes/app_theme.dart';
 import 'package:clo2/utils/co2text.dart';
 import 'package:flutter/material.dart';
@@ -99,9 +100,11 @@ class _HomePageState extends State<HomePage> {
                                     width: carbonUsage ? 16 : 18,
                                     decoration: BoxDecoration(
                                       image: DecorationImage(
-                                        image: carbonUsage ? AssetImage(
-                                            'assets/homepage/cloud_queue.png') : AssetImage(
-                                            'assets/homepage/cloud_queue2.png'),
+                                        image: carbonUsage
+                                            ? AssetImage(
+                                                'assets/homepage/cloud_queue.png')
+                                            : AssetImage(
+                                                'assets/homepage/cloud_queue2.png'),
                                         fit: BoxFit.cover,
                                       ),
                                     ),
@@ -132,9 +135,11 @@ class _HomePageState extends State<HomePage> {
                                     width: carbonUsage ? 18 : 16,
                                     decoration: BoxDecoration(
                                       image: DecorationImage(
-                                        image: carbonUsage ? AssetImage(
-                                            'assets/homepage/energy_savings_leaf.png') : AssetImage(
-                                            'assets/homepage/energy_savings_leaf2.png'),
+                                        image: carbonUsage
+                                            ? AssetImage(
+                                                'assets/homepage/energy_savings_leaf.png')
+                                            : AssetImage(
+                                                'assets/homepage/energy_savings_leaf2.png'),
                                         fit: BoxFit.cover,
                                       ),
                                     ),
@@ -163,35 +168,97 @@ class _HomePageState extends State<HomePage> {
                             ],
                           ),
                         ),
-                        const Positioned(
-                          left: 198,
-                          top: 60,
-                          child: Text('B', style: AppTheme.roboto28BoldGreen),
-                        ),
-                        const Positioned(
-                            left: 222,
-                            top: 75,
-                            child: Text(
-                              'Level',
-                              style: TextStyle(
-                                color: Color(0xFF07684B),
-                                fontSize: 12,
-                                fontFamily: 'Roboto',
-                                fontWeight: FontWeight.w400,
-                              ),
-                            )),
                         Positioned(
-                            left: 256,
-                            top: 72,
-                            child: Container(
-                              width: 18,
-                              height: 18,
-                              decoration: const BoxDecoration(
-                                image: DecorationImage(
-                                  image:
-                                      AssetImage('assets/homepage/error.png'),
-                                  fit: BoxFit.cover,
-                                ),
+                            left: 198,
+                            top: 60,
+                            child: GestureDetector(
+                              onTap: () {
+                                final appState =
+                                    context.findAncestorStateOfType<
+                                        AppContainerState>();
+
+                                if (appState != null) {
+                                  appState.toggleDrawer();
+                                  appState.updateDrawer(Container(
+                                    margin: const EdgeInsets.fromLTRB(
+                                        20, 24, 20, 24),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        SizedBox(
+                                          height: 28,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              const Text(
+                                                'Eco-Performance',
+                                                style: TextStyle(
+                                                  color: Color(0xFF072100),
+                                                  fontSize: 18,
+                                                  fontFamily: 'Roboto',
+                                                  fontWeight: FontWeight.w700,
+                                                  height: 28 / 18,
+                                                ),
+                                              ),
+                                              GestureDetector(
+                                                onTap: () {
+                                                  appState.toggleDrawer();
+                                                },
+                                                child: Container(
+                                                  width: 24,
+                                                  height: 24,
+                                                  decoration:
+                                                      const BoxDecoration(
+                                                    image: DecorationImage(
+                                                      image: AssetImage(
+                                                          'assets/drawer/close.png'),
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                                  ),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                        
+                                      ],
+                                    ),
+                                  ));
+                                }
+                              },
+                              child: SizedBox(
+                                height: 36,
+                                child: Row(children: [
+                                  Text('B', style: AppTheme.roboto28BoldGreen),
+                                  const SizedBox(
+                                    width: 6,
+                                  ),
+                                  const Text(
+                                    'Level',
+                                    style: TextStyle(
+                                      color: Color(0xFF07684B),
+                                      fontSize: 12,
+                                      fontFamily: 'Roboto',
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 6,
+                                  ),
+                                  Container(
+                                    width: 18,
+                                    height: 18,
+                                    decoration: const BoxDecoration(
+                                      image: DecorationImage(
+                                        image: AssetImage(
+                                            'assets/homepage/error.png'),
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  )
+                                ]),
                               ),
                             )),
                         Positioned(
