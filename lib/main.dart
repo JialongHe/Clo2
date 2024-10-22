@@ -14,8 +14,9 @@ class Clo2App extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final FlutterView view = WidgetsBinding.instance.platformDispatcher.views.first;
-        
+        final FlutterView view =
+            WidgetsBinding.instance.platformDispatcher.views.first;
+
         return Directionality(
           textDirection: TextDirection.ltr,
           child: MediaQuery(
@@ -37,19 +38,27 @@ class AppContainer extends StatelessWidget {
         statusBarIconBrightness: Brightness.dark,
       ),
     );
-    
+
     return Container(
       color: AppTheme.backgroundColor,
       child: DefaultTextStyle(
-        style: const TextStyle(
-          fontFamily: 'Roboto',
-          fontSize: 16,
-        ),
-        child: SafeArea(
-          top: true,
-          child: HomePage(),
-        )
-      ),
+          style: const TextStyle(
+            fontFamily: 'Roboto',
+            fontSize: 16,
+          ),
+          child: SafeArea(
+              top: true,
+              child: Navigator(
+                pages: [
+                  MaterialPage(child: HomePage()),
+                ],
+                onPopPage: (route, result) {
+                  if (!route.didPop(result)) {
+                    return false;
+                  }
+                  return true;
+                },
+              ))),
     );
   }
 }

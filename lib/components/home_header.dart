@@ -1,3 +1,4 @@
+import 'package:clo2/pages/game_page.dart';
 import 'package:clo2/themes/app_theme.dart';
 import 'package:flutter/material.dart';
 
@@ -71,7 +72,11 @@ class HomeHeader extends StatelessWidget {
                       ),
                     ),
                     GestureDetector(
-                      onTap: () => {},
+                      onTap: () => {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => GamePage()),
+                        )
+                      },
                       child: Container(
                         width: 376,
                         height: 99,
