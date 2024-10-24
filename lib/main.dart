@@ -46,6 +46,10 @@ class AppContainerState extends State<AppContainer> {
 
   Widget? drawerContent;
 
+  ScrollBehavior customScrollBehavior = const ScrollBehavior().copyWith(
+    scrollbars: false,
+  );
+
   updateDrawer(Widget? newContent) {
     this.setState(() {
       this.drawerContent = newContent;
@@ -67,39 +71,41 @@ class AppContainerState extends State<AppContainer> {
     return Container(
       color: AppTheme.backgroundColor,
       child: DefaultTextStyle(
-        style: const TextStyle(
-          fontFamily: 'Roboto',
-          fontSize: 16,
-        ),
-        child: Stack(
-          children: [
-            SafeArea(
-              top: true,
-              child: Navigator(
-                pages: [
-                  MaterialPage(child: HomePage()),
-                ],
-                onPopPage: (route, result) {
-                  if (!route.didPop(result)) {
-                    return false;
-                  }
-                  return true;
-                },
-              ),
+          style: const TextStyle(
+            fontFamily: 'Roboto',
+            fontSize: 16,
+          ),
+          child: ScrollConfiguration(
+            behavior: customScrollBehavior,
+            child: Stack(
+              children: [
+                SafeArea(
+                  top: true,
+                  child: Navigator(
+                    pages: [
+                      MaterialPage(child: HomePage()),
+                    ],
+                    onPopPage: (route, result) {
+                      if (!route.didPop(result)) {
+                        return false;
+                      }
+                      return true;
+                    },
+                  ),
+                ),
+                if (this.drawerVisible)
+                  Container(
+                    width: screenWidth,
+                    height: screenHeight,
+                    decoration: BoxDecoration(color: Color(0x7F383838)),
+                  ),
+                D.Drawer(
+                  isDrawerVisible: this.drawerVisible,
+                  child: this.drawerContent,
+                ),
+              ],
             ),
-            if (this.drawerVisible)
-              Container(
-                width: screenWidth,
-                height: screenHeight,
-                decoration: BoxDecoration(color: Color(0x7F383838)),
-              ),
-            D.Drawer(
-              isDrawerVisible: this.drawerVisible,
-              child: this.drawerContent,
-            ),
-          ],
-        ),
-      ),
+          )),
     );
   }
 }

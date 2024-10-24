@@ -8,6 +8,24 @@ class GamePage extends StatefulWidget {
 
 class _GamePageState extends State<GamePage> {
   bool carbonUsage = true;
+  ScrollController _scrollController = ScrollController();
+  double offset = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(() {
+      setState(() {
+        offset = _scrollController.offset;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   List<Image> levelTrees = [
     Image.asset(
@@ -68,41 +86,41 @@ class _GamePageState extends State<GamePage> {
                       ),
                     )),
                     Positioned(
-                      top: 9,
-                      left: 11,
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        child:  Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Container(
-                              width: 24,
-                              height: 24,
-                              decoration: const BoxDecoration(
-                                image: DecorationImage(
-                                  image: AssetImage(
-                                      'assets/gamification/keyboard_arrow_left.png'),
-                                  fit: BoxFit.cover,
+                        top: 9,
+                        left: 11,
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                  width: 24,
+                                  height: 24,
+                                  decoration: const BoxDecoration(
+                                    image: DecorationImage(
+                                      image: AssetImage(
+                                          'assets/gamification/keyboard_arrow_left.png'),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  )),
+                              SizedBox(
+                                width: 8,
+                              ),
+                              Text(
+                                'My tree',
+                                style: TextStyle(
+                                  color: Color(0xFF07684B),
+                                  fontSize: 22,
+                                  fontFamily: 'Roboto',
+                                  fontWeight: FontWeight.w700,
                                 ),
-                              )),
-                          SizedBox(
-                            width: 8,
+                              )
+                            ],
                           ),
-                          Text(
-                            'My tree',
-                            style: TextStyle(
-                              color: Color(0xFF07684B),
-                              fontSize: 22,
-                              fontFamily: 'Roboto',
-                              fontWeight: FontWeight.w700,
-                            ),
-                          )
-                        ],
-                      ),)
-                    ),
+                        )),
                     Positioned(
                         left: 12,
                         top: 47,
@@ -254,6 +272,7 @@ class _GamePageState extends State<GamePage> {
                   height: screenHeight - 453,
                   margin: EdgeInsets.symmetric(horizontal: 18),
                   child: SingleChildScrollView(
+                    controller: _scrollController,
                     child: Column(
                       children: [
                         Container(
@@ -387,6 +406,9 @@ class _GamePageState extends State<GamePage> {
                                             height: 24 / 16,
                                           ),
                                         ),
+                                        SizedBox(
+                                          height: 6,
+                                        ),
                                         Text(
                                           'Decrease the 30g CO2e/day. ',
                                           style: TextStyle(
@@ -450,16 +472,57 @@ class _GamePageState extends State<GamePage> {
                                 ),
                               ),
                               SizedBox(height: 14),
-                              GoalCard(leftImage: "assets/gamification/dark_mode.png", name: "Activate the Eco-Mode", capacity: 50, progess: 50, rightImage: "assets/gamification/credit.png"),
-                              GoalCard(leftImage: "assets/gamification/cloud_download.png", name: "Delete unused files on google drive", capacity: 50, progess: 5, rightImage: "assets/gamification/check.png"),
-                              GoalCard(leftImage: "assets/gamification/cloud_download.png", name: "Accomplish Carbon Budget", capacity: 50, progess: 10, rightImage: "assets/gamification/check.png"),
-                              GoalCard(leftImage: "assets/gamification/cloud_download.png", name: "Accomplish Carbon Budget", capacity: 50, progess: 25, rightImage: "assets/gamification/check.png"),
+                              GoalCard(
+                                  leftImage:
+                                      "assets/gamification/dark_mode.png",
+                                  name: "Activate the Eco-Mode",
+                                  capacity: 50,
+                                  progess: 50,
+                                  rightImage: "assets/gamification/credit.png"),
+                              GoalCard(
+                                  leftImage:
+                                      "assets/gamification/cloud_download.png",
+                                  name: "Delete unused files on google drive",
+                                  capacity: 50,
+                                  progess: 5,
+                                  rightImage: "assets/gamification/check.png"),
+                              GoalCard(
+                                  leftImage:
+                                      "assets/gamification/cloud_download.png",
+                                  name: "Accomplish Carbon Budget",
+                                  capacity: 50,
+                                  progess: 10,
+                                  rightImage: "assets/gamification/check.png"),
+                              GoalCard(
+                                  leftImage:
+                                      "assets/gamification/cloud_download.png",
+                                  name: "Accomplish Carbon Budget",
+                                  capacity: 50,
+                                  progess: 25,
+                                  rightImage: "assets/gamification/check.png"),
                             ],
                           ),
                         )
                       ],
                     ),
                   ))),
+          if (offset > 0)
+            Positioned(
+              top: 453,
+              left: 0,
+              right: 0,
+              child: IgnorePointer(
+                  child: Container(
+                height: 45,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment(0.0, 1.00),
+                    end: Alignment(-0.0, -1),
+                    colors: [Color(0x42F6F2F2), Color(0xFFF4F4F4)],
+                  ),
+                ),
+              )),
+            ),
         ],
       ),
     );

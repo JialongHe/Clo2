@@ -1,8 +1,13 @@
+import 'dart:ui';
+
 import 'package:clo2/components/carousel_card.dart';
 import 'package:clo2/components/filter_bar.dart';
 import 'package:clo2/components/home_header.dart';
 import 'package:clo2/components/suggestion_card.dart';
 import 'package:clo2/main.dart';
+import 'package:clo2/pages/application_page.dart';
+import 'package:clo2/pages/battery_page.dart';
+import 'package:clo2/pages/performance_page.dart';
 import 'package:clo2/themes/app_theme.dart';
 import 'package:clo2/utils/co2text.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +19,24 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool carbonUsage = true;
+  ScrollController _scrollController = ScrollController();
+  double offset = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(() {
+      setState(() {
+        offset = _scrollController.offset;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,13 +66,17 @@ class _HomePageState extends State<HomePage> {
         ),
         const SizedBox(height: 20),
         FilterBar(),
+        SizedBox(
+          height: 18,
+        ),
         Expanded(
-          child: SingleChildScrollView(
+            child: Stack(children: [
+          SingleChildScrollView(
+              controller: _scrollController,
               scrollDirection: Axis.vertical,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 17),
                   Container(
                     padding: AppTheme.horizontalPadding,
                     height: 180,
@@ -180,52 +207,9 @@ class _HomePageState extends State<HomePage> {
                                 if (appState != null) {
                                   appState.toggleDrawer();
                                   appState.updateDrawer(Container(
-                                    margin: const EdgeInsets.fromLTRB(
-                                        20, 24, 20, 24),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        SizedBox(
-                                          height: 28,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              const Text(
-                                                'Eco-Performance',
-                                                style: TextStyle(
-                                                  color: Color(0xFF072100),
-                                                  fontSize: 18,
-                                                  fontFamily: 'Roboto',
-                                                  fontWeight: FontWeight.w700,
-                                                  height: 28 / 18,
-                                                ),
-                                              ),
-                                              GestureDetector(
-                                                onTap: () {
-                                                  appState.toggleDrawer();
-                                                },
-                                                child: Container(
-                                                  width: 24,
-                                                  height: 24,
-                                                  decoration:
-                                                      const BoxDecoration(
-                                                    image: DecorationImage(
-                                                      image: AssetImage(
-                                                          'assets/drawer/close.png'),
-                                                      fit: BoxFit.cover,
-                                                    ),
-                                                  ),
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                        
-                                      ],
-                                    ),
-                                  ));
+                                      margin: const EdgeInsets.fromLTRB(
+                                          20, 24, 20, 0),
+                                      child: PerformancePage()));
                                 }
                               },
                               child: SizedBox(
@@ -476,19 +460,50 @@ class _HomePageState extends State<HomePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SuggestionCard(
-                            image: 'assets/homepage/cloud_sync.png',
-                            name: 'Application',
-                            detail: '11 related suggestions'),
+                          image: 'assets/homepage/cloud_sync.png',
+                          name: 'Application',
+                          detail: '11 related suggestions',
+                          linkPage: ApplicationPage(),
+                        ),
+                        Container(
+                          height: 0.5,
+                          decoration: BoxDecoration(
+                            color: Colors.grey,
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
                         SuggestionCard(
-                            image: 'assets/homepage/battery_1_bar.png',
-                            name: 'Other',
-                            detail: '9 related suggestions'),
+                          image: 'assets/homepage/battery_1_bar.png',
+                          name: 'Other',
+                          detail: '9 related suggestions',
+                          linkPage: BatteryPage(),
+                        ),
                       ],
                     ),
-                  )
+                  ),
+                  SizedBox(
+                    height: 50,
+                  ),
                 ],
               )),
-        )
+          if (offset > 0)
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: IgnorePointer(
+                  child: Container(
+                height: 45,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment(0.0, 1.00),
+                    end: Alignment(-0.0, -1),
+                    colors: [Color(0x42F6F2F2), Color(0xFFF4F4F4)],
+                  ),
+                ),
+              )),
+            ),
+        ]))
       ],
     );
   }
