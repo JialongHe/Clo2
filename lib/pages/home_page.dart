@@ -10,9 +10,14 @@ import 'package:clo2/pages/battery_page.dart';
 import 'package:clo2/pages/performance_page.dart';
 import 'package:clo2/themes/app_theme.dart';
 import 'package:clo2/utils/co2text.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
+  User? user;
+
+  HomePage({this.user});
+
   @override
   _HomePageState createState() => _HomePageState();
 }

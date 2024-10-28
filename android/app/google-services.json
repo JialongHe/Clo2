@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "366573246764",
+    "project_id": "clo2-80b99",
+    "storage_bucket": "clo2-80b99.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:366573246764:android:8e143aa0e08d5742c2f489",
+        "android_client_info": {
+          "package_name": "com.example.clo2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "366573246764-tfmt485aim37bm566igjf1qa8ks5pb9e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlx3_QXxKlmJ7ZySn9_NpBX2_VDRJ_IO4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "366573246764-tfmt485aim37bm566igjf1qa8ks5pb9e.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "366573246764-d18brra4gksece0iednr4m5ei2btla4l.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.clo2"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

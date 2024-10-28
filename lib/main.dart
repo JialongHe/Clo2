@@ -1,14 +1,26 @@
 import 'dart:ui';
 
+import 'package:clo2/pages/login_page.dart';
 import 'package:clo2/themes/app_theme.dart';
+import 'package:clo2/utils/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'pages/home_page.dart';
 
 import 'package:clo2/components/drawer.dart' as D;
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
-  runApp(Clo2App());
+main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(create: (_) => UserProvider()),
+  ], child: Clo2App()));
 }
 
 class Clo2App extends StatelessWidget {
@@ -83,7 +95,9 @@ class AppContainerState extends State<AppContainer> {
                   top: true,
                   child: Navigator(
                     pages: [
-                      MaterialPage(child: HomePage()),
+                      MaterialPage(child: LoginPage()
+                          // HomePage()
+                          ),
                     ],
                     onPopPage: (route, result) {
                       if (!route.didPop(result)) {

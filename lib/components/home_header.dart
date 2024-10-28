@@ -1,10 +1,16 @@
 import 'package:clo2/pages/game_page.dart';
 import 'package:clo2/themes/app_theme.dart';
+import 'package:clo2/utils/user_provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class HomeHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    bool isLoggedIn = context.watch<UserProvider>().isLoggedIn;
+    User? user = context.watch<UserProvider>().user;
+
     return Column(
       children: [
         // Status bar height
@@ -23,10 +29,10 @@ class HomeHeader extends StatelessWidget {
                     Container(
                       width: 40,
                       height: 40,
-                      margin: const EdgeInsets.only(top: 12),
-                      decoration: const BoxDecoration(
+                      margin: EdgeInsets.only(top: 12),
+                      decoration: BoxDecoration(
                         image: DecorationImage(
-                          image: AssetImage('assets/homepage/avatar.png'),
+                          image: isLoggedIn ? NetworkImage(user!.photoURL!) : const AssetImage('assets/homepage/avatar.png'),
                           fit: BoxFit.cover,
                         ),
                         shape: BoxShape.circle,
