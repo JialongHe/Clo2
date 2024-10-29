@@ -8,6 +8,11 @@ import 'package:provider/provider.dart';
 class HomeHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+    double widthRadio = screenWidth / AppTheme.designWidth;
+    double heightRadio = screenHeight / AppTheme.designHeigh;
+    
     User? user = context.watch<UserProvider>().user;
 
     return Column(
@@ -83,13 +88,13 @@ class HomeHeader extends StatelessWidget {
                         )
                       },
                       child: Container(
-                        width: 376,
+                        width: 376 * widthRadio,
                         height: 99,
                         margin: const EdgeInsets.only(top: 17),
                         child: Stack(
                           children: [
                             Container(
-                              width: 376,
+                              width: 376 * widthRadio,
                               height: 99,
                               decoration: const BoxDecoration(
                                 image: DecorationImage(
@@ -167,7 +172,7 @@ class HomeHeader extends StatelessWidget {
                                         ]),
                                   ),
                                   Container(
-                                    width: 180,
+                                    width: 180 * widthRadio,
                                     height: 6,
                                     margin: const EdgeInsets.only(top: 7),
                                     child: Stack(
@@ -213,11 +218,11 @@ class HomeHeader extends StatelessWidget {
                   ],
                 ),
                 Positioned(
-                  top: 21,
+                  bottom: 16,
                   right: 11,
                   child: Container(
-                    width: 166,
-                    height: 251,
+                    width: 166 * widthRadio,
+                    height: 251 * widthRadio,
                     decoration: const BoxDecoration(
                       image: DecorationImage(
                         image: AssetImage('assets/homepage/tree_model.png'),

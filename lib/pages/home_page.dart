@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:clo2/components/carousel_card.dart';
@@ -13,6 +14,7 @@ import 'package:clo2/utils/android_usuage.dart';
 import 'package:clo2/utils/co2text.dart';
 import 'package:clo2/utils/google_api_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -37,8 +39,10 @@ class _HomePageState extends State<HomePage> {
     super.initState();
 
     _fetchStorageUsageData();
-    _fetchNetworkUsage();
-    _fetchBatteryInfo();
+    if (!kIsWeb && Platform.isAndroid) {
+      _fetchNetworkUsage();
+      _fetchBatteryInfo();
+    }
 
     _scrollController.addListener(() {
       setState(() {
@@ -82,9 +86,11 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    print("screenwidth------------------------");
-    print(screenWidth);
-    print(screenHeight);
+    double widthRadio = screenWidth / AppTheme.designWidth;
+    double heightRadio = screenHeight / AppTheme.designHeigh;
+
+    // print(screenWidth);
+    // print(screenHeight);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -143,7 +149,7 @@ class _HomePageState extends State<HomePage> {
                           right: carbonUsage ? null : 0,
                           child: Container(
                             height: 179,
-                            width: 376,
+                            width: 376 * widthRadio,
                             decoration: BoxDecoration(
                               image: DecorationImage(
                                 image: carbonUsage
@@ -157,7 +163,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                         Positioned(
                             top: 15,
-                            right: 52,
+                            right: 30 * widthRadio,
                             child: GestureDetector(
                               onTap: () => (this.setState(() {
                                 carbonUsage = false;
@@ -192,7 +198,7 @@ class _HomePageState extends State<HomePage> {
                             )),
                         Positioned(
                             top: 15,
-                            left: 21,
+                            left: 21 * widthRadio,
                             child: GestureDetector(
                               onTap: () => (this.setState(() {
                                 carbonUsage = true;
@@ -428,15 +434,6 @@ class _HomePageState extends State<HomePage> {
                                   'It is estimated a small car’s carbon emission',
                               number: '2000',
                               unit: 'Km'),
-                          SizedBox(
-                            width: 12,
-                          ),
-                          CarouselCard(
-                              image: 'assets/homepage/food.png',
-                              details:
-                                  'It is estimated eqaul to one meal with beef',
-                              number: '15.9',
-                              unit: 'Kg / beef'),
                           SizedBox(
                             width: 12,
                           ),

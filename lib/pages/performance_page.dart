@@ -1,10 +1,15 @@
 import 'package:clo2/main.dart';
+import 'package:clo2/themes/app_theme.dart';
 import 'package:flutter/material.dart';
 
 // TODO: extract the content
 class PerformancePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+    double widthRadio = screenWidth / AppTheme.designWidth;
+    double heightRadio = screenHeight / AppTheme.designHeigh;
     final appState = context.findAncestorStateOfType<AppContainerState>();
 
     return Column(
@@ -44,14 +49,14 @@ class PerformancePage extends StatelessWidget {
           ),
         ),
         Container(
-          height: 170,
+          height: 170 * widthRadio,
           width: double.infinity,
           child: Stack(
             alignment: Alignment.bottomCenter,
             children: [
               Container(
-                width: 345,
-                height: 167,
+                width: 345 * widthRadio,
+                height: 167 * widthRadio,
                 decoration: const BoxDecoration(
                   image: DecorationImage(
                     image: AssetImage('assets/performance/level_a.png'),

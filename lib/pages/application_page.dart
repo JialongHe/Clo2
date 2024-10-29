@@ -154,10 +154,10 @@ class ApplicationPage extends StatelessWidget {
                   'Choosing Environmentally Cloud Services',
                   style: TextStyle(
                     color: Color(0xFF07684B),
-                    fontSize: 16,
+                    fontSize: 14,
                     fontFamily: 'Roboto',
                     fontWeight: FontWeight.w700,
-                    height: 24 / 16,
+                    height: 24 / 14,
                   ),
                 )
               ],

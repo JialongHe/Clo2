@@ -1,4 +1,5 @@
 import 'package:clo2/components/goal_card.dart';
+import 'package:clo2/themes/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class GamePage extends StatefulWidget {
@@ -59,6 +60,8 @@ class _GamePageState extends State<GamePage> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
+    double widthRadio = screenWidth / AppTheme.designWidth;
+    double heightRadio = screenHeight / AppTheme.designHeigh;
 
     return Container(
       decoration: const BoxDecoration(
@@ -113,7 +116,7 @@ class _GamePageState extends State<GamePage> {
                                 'My tree',
                                 style: TextStyle(
                                   color: Color(0xFF07684B),
-                                  fontSize: 22,
+                                  fontSize: 18,
                                   fontFamily: 'Roboto',
                                   fontWeight: FontWeight.w700,
                                 ),
@@ -125,7 +128,7 @@ class _GamePageState extends State<GamePage> {
                         left: 12,
                         top: 47,
                         child: Container(
-                          width: screenWidth - 64,
+                          width: (screenWidth - 64) * widthRadio,
                           height: 20,
                           decoration: ShapeDecoration(
                             color: Color(0xFFFDEFDB),
@@ -138,7 +141,7 @@ class _GamePageState extends State<GamePage> {
                         left: 12,
                         top: 47,
                         child: Container(
-                          width: 197,
+                          width: 140,
                           height: 20,
                           decoration: ShapeDecoration(
                             color: Color(0xFFFE970F),
@@ -189,7 +192,8 @@ class _GamePageState extends State<GamePage> {
                                     fontWeight: FontWeight.w700,
                                   ),
                                 ),
-                              )
+                              ),
+                              SizedBox(width: 15)
                             ],
                           )),
                     ),
@@ -400,10 +404,10 @@ class _GamePageState extends State<GamePage> {
                                           'Clean the Data in Google Cloud ',
                                           style: TextStyle(
                                             color: Color(0xFF072100),
-                                            fontSize: 16,
+                                            fontSize: 14,
                                             fontFamily: 'Roboto',
                                             fontWeight: FontWeight.w700,
-                                            height: 24 / 16,
+                                            height: 24 / 14,
                                           ),
                                         ),
                                         SizedBox(
@@ -421,7 +425,7 @@ class _GamePageState extends State<GamePage> {
                                         ),
                                       ],
                                     ),
-                                    SizedBox(width: 39),
+                                    Spacer(),
                                     Text(
                                       '+50',
                                       style: TextStyle(
@@ -452,7 +456,7 @@ class _GamePageState extends State<GamePage> {
                         ),
                         Container(
                           width: screenWidth - 36,
-                          height: 362,
+                          // height: 362,
                           padding: EdgeInsets.all(15),
                           decoration: ShapeDecoration(
                             color: Colors.white,

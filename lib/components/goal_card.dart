@@ -1,3 +1,4 @@
+import 'package:clo2/themes/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class GoalCard extends StatelessWidget {
@@ -16,10 +17,15 @@ class GoalCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+    double widthRadio = screenWidth / AppTheme.designWidth;
+    double heightRadio = screenHeight / AppTheme.designHeigh;
+    
     return Container(
-      // width: 347,
       height: 70,
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 16),
+      margin: const EdgeInsets.only(bottom: 12),
       decoration: ShapeDecoration(
         color: Color(0xFFEDF6E9),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -40,7 +46,7 @@ class GoalCard extends StatelessWidget {
             width: 8,
           ),
           SizedBox(
-              width: 250,
+              width: 208 * widthRadio,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -59,7 +65,7 @@ class GoalCard extends StatelessWidget {
                     height: 6,
                   ),
                   Container(
-                    width: 208,
+                    width: 208 * widthRadio,
                     height: 12,
                     child: Stack(
                       children: [
@@ -67,7 +73,7 @@ class GoalCard extends StatelessWidget {
                           left: 0,
                           top: 0,
                           child: Container(
-                            width: 208,
+                            width: 208 * widthRadio,
                             height: 12,
                             decoration: ShapeDecoration(
                               color: Color(0xFFD9E7CA),
@@ -80,7 +86,7 @@ class GoalCard extends StatelessWidget {
                           left: 0,
                           top: 0,
                           child: Container(
-                            width: 208 * this.progess / this.capacity,
+                            width: 208 * widthRadio * this.progess / this.capacity,
                             height: 12,
                             decoration: ShapeDecoration(
                               color: Color(0xFF07684B),
@@ -90,7 +96,7 @@ class GoalCard extends StatelessWidget {
                           ),
                         ),
                         Positioned(
-                          left: 88,
+                          left: 88 * widthRadio,
                           top: 1,
                           child: Text(
                             '${this.progess} / ${this.capacity}',

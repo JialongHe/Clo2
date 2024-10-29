@@ -19,10 +19,10 @@ class InformationCard extends StatelessWidget {
             this.name,
             style: TextStyle(
               color: Color(0xFF072100),
-              fontSize: 16,
+              fontSize: 14,
               fontFamily: 'Roboto',
               fontWeight: FontWeight.w400,
-              height: 24 / 16,
+              height: 24 / 14,
             ),
           ),
           SizedBox(
