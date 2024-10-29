@@ -15,6 +15,11 @@ class _LoginPageState extends State<LoginPage> {
   final GoogleSignIn _googleSignIn = GoogleSignIn(
     clientId:
         '366573246764-tfmt485aim37bm566igjf1qa8ks5pb9e.apps.googleusercontent.com',
+    scopes: [
+      'https://www.googleapis.com/auth/drive.metadata.readonly',
+      'https://www.googleapis.com/auth/gmail.readonly',
+      'https://www.googleapis.com/auth/calendar.readonly',
+    ],
   );
 
   Future<User?> _signInWithGoogle() async {
@@ -40,6 +45,9 @@ class _LoginPageState extends State<LoginPage> {
       // Sign in with Firebase using the credential
       final UserCredential userCredential =
           await _auth.signInWithCredential(credential);
+      final User? user = userCredential.user;
+      context.read<UserProvider>().login(user!, googleUser);
+
       return userCredential.user;
     } catch (e) {
       print('Error signing in with Google: $e');
@@ -83,9 +91,8 @@ class _LoginPageState extends State<LoginPage> {
         GestureDetector(
           onTap: () async {
             User? user = await _signInWithGoogle();
+
             if (user != null) {
-              // print("User signed in: ${user.displayName}");
-              context.read<UserProvider>().login(user);
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) => HomePage()),
               );

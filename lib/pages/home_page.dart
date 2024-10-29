@@ -9,7 +9,9 @@ import 'package:clo2/pages/application_page.dart';
 import 'package:clo2/pages/battery_page.dart';
 import 'package:clo2/pages/performance_page.dart';
 import 'package:clo2/themes/app_theme.dart';
+import 'package:clo2/utils/android_usuage.dart';
 import 'package:clo2/utils/co2text.dart';
+import 'package:clo2/utils/google_api_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -26,14 +28,47 @@ class _HomePageState extends State<HomePage> {
   bool carbonUsage = true;
   ScrollController _scrollController = ScrollController();
   double offset = 0;
+  final GoogleApiService _apiService = GoogleApiService();
+  bool _isLoading = true;
+  String? _storageUsage;
 
   @override
   void initState() {
     super.initState();
+
+    _fetchStorageUsageData();
+    _fetchNetworkUsage();
+    _fetchBatteryInfo();
+
     _scrollController.addListener(() {
       setState(() {
         offset = _scrollController.offset;
       });
+    });
+  }
+
+  Future<void> _fetchStorageUsageData() async {
+    _storageUsage = await _apiService.fetchStorageUsage(context);
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  Future<void> _fetchNetworkUsage() async {
+    final usage = await AndroidUsage.getNetworkUsage();
+    setState(() {
+      print("network ---------------------");
+      print(usage);
+      // networkUsage = usage;
+    });
+  }
+
+  Future<void> _fetchBatteryInfo() async {
+    final info = await AndroidUsage.getBatteryInfo();
+    setState(() {
+      print("battery -------------------------");
+      print(info);
+      // batteryInfo = info;
     });
   }
 
@@ -46,6 +81,10 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+    print("screenwidth------------------------");
+    print(screenWidth);
+    print(screenHeight);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

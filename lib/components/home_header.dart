@@ -8,7 +8,6 @@ import 'package:provider/provider.dart';
 class HomeHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    bool isLoggedIn = context.watch<UserProvider>().isLoggedIn;
     User? user = context.watch<UserProvider>().user;
 
     return Column(
@@ -32,7 +31,7 @@ class HomeHeader extends StatelessWidget {
                       margin: EdgeInsets.only(top: 12),
                       decoration: BoxDecoration(
                         image: DecorationImage(
-                          image: isLoggedIn ? NetworkImage(user!.photoURL!) : const AssetImage('assets/homepage/avatar.png'),
+                          image: user != null ? NetworkImage(user.photoURL!) : const AssetImage('assets/homepage/avatar.png'),
                           fit: BoxFit.cover,
                         ),
                         shape: BoxShape.circle,

@@ -3,6 +3,10 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class AppTheme {
+  // Sizes for Responsive
+  static const double designHeigh = 892;
+  static const double designWidth = 412;
+
   // Colors
   static const Color backgroundColor = Color.fromRGBO(244, 244, 244, 1);
 
