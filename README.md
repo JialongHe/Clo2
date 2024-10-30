@@ -2,8 +2,8 @@
 
 Clo2 is an environmental data tracker that allows users to view their carbon footprint based on digital activities like storage use, network data, and battery consumption. Designed for Android, Clo2 empowers users to reduce their impact on the environment by increasing awareness of their digital resource usage.
 
-<!-- ![App Preview](link_image.png)
-![Dashboard Overview](link_image.png) -->
+![App Preview](https://github.com/JialongHe/Clo2/blob/master/images/dash_carbon%20emission.png)
+![Dashboard Overview](https://github.com/JialongHe/Clo2/blob/master/images/homepage.png)
 
 ## Features 🎉
 
