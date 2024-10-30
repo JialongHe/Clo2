@@ -20,9 +20,9 @@ class AppTheme {
                               fontWeight: FontWeight.w400,
                           );
 
-  static const roboto16BoldGreen = TextStyle(
+  static const roboto14BoldGreen = TextStyle(
                               color: Color(0xFF07684B),
-                              fontSize: 17,
+                              fontSize: 14,
                               fontFamily: 'Roboto',
                               fontWeight: FontWeight.w700,
                           );                        

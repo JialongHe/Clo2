@@ -1,4 +1,6 @@
 import 'package:clo2/components/goal_card.dart';
+import 'package:clo2/main.dart';
+import 'package:clo2/pages/certificate_page.dart';
 import 'package:clo2/themes/app_theme.dart';
 import 'package:flutter/material.dart';
 
@@ -214,43 +216,57 @@ class _GamePageState extends State<GamePage> {
                     Positioned(
                         right: 0,
                         child: Container(
-                          width: 95,
-                          height: 28,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 4),
-                          decoration: ShapeDecoration(
-                            color: Color(0xFF07684B),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14),
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              Container(
-                                  width: 16,
-                                  height: 16,
-                                  decoration: const BoxDecoration(
-                                    image: DecorationImage(
-                                      image: AssetImage(
-                                          'assets/gamification/badge.png'),
-                                      fit: BoxFit.cover,
-                                    ),
-                                  )),
-                              SizedBox(
-                                width: 6,
+                            width: 95,
+                            height: 28,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 4),
+                            decoration: ShapeDecoration(
+                              color: Color(0xFF07684B),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
                               ),
-                              Text(
-                                '02 /12',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 14,
-                                  fontFamily: 'Roboto',
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              )
-                            ],
-                          ),
-                        )),
+                            ),
+                            child: GestureDetector(
+                              onTap: () {
+                                final appState =
+                                    context.findAncestorStateOfType<
+                                        AppContainerState>();
+
+                                if (appState != null) {
+                                  appState.toggleDrawer();
+                                  appState.updateDrawer(Container(
+                                      margin: const EdgeInsets.fromLTRB(
+                                          20, 24, 20, 0),
+                                      child: CertificatePage()));
+                                }
+                              },
+                              child: Row(
+                                children: [
+                                  Container(
+                                      width: 16,
+                                      height: 16,
+                                      decoration: const BoxDecoration(
+                                        image: DecorationImage(
+                                          image: AssetImage(
+                                              'assets/gamification/badge.png'),
+                                          fit: BoxFit.cover,
+                                        ),
+                                      )),
+                                  const SizedBox(
+                                    width: 6,
+                                  ),
+                                  Text(
+                                    '02 /12',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontFamily: 'Roboto',
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ))),
                   ],
                 ),
               )),

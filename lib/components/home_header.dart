@@ -181,7 +181,7 @@ class HomeHeader extends StatelessWidget {
                                           left: 0,
                                           top: 0,
                                           child: Container(
-                                            width: 180,
+                                            width: 180 * widthRadio,
                                             height: 6,
                                             decoration: ShapeDecoration(
                                               color: const Color(0xFFEDF6E9),

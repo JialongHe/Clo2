@@ -48,6 +48,7 @@ class PerformancePage extends StatelessWidget {
             ],
           ),
         ),
+        SizedBox(height: 6,),
         Container(
           height: 170 * widthRadio,
           width: double.infinity,
@@ -67,7 +68,7 @@ class PerformancePage extends StatelessWidget {
               Positioned(
                   bottom: 0,
                   child: Text(
-                    'Carbon emission: 185 g CO2',
+                    'CO2: 185 g CO2',
                     style: TextStyle(
                       color: Color(0xFF8A8B87),
                       fontSize: 14,
@@ -91,6 +92,7 @@ class PerformancePage extends StatelessWidget {
             ],
           ),
         ),
+        SizedBox(height: 6,),
         SizedBox(
           height: 24,
           child: Row(

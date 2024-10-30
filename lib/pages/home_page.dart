@@ -2,12 +2,14 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:clo2/components/carousel_card.dart';
+import 'package:clo2/components/dashline.dart';
 import 'package:clo2/components/filter_bar.dart';
 import 'package:clo2/components/home_header.dart';
 import 'package:clo2/components/suggestion_card.dart';
 import 'package:clo2/main.dart';
 import 'package:clo2/pages/application_page.dart';
 import 'package:clo2/pages/battery_page.dart';
+import 'package:clo2/pages/dashboard_page.dart';
 import 'package:clo2/pages/performance_page.dart';
 import 'package:clo2/themes/app_theme.dart';
 import 'package:clo2/utils/android_usuage.dart';
@@ -38,7 +40,9 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    _fetchStorageUsageData();
+    if (widget.user != null) {
+      _fetchStorageUsageData();
+    }
     if (!kIsWeb && Platform.isAndroid) {
       _fetchNetworkUsage();
       _fetchBatteryInfo();
@@ -163,7 +167,8 @@ class _HomePageState extends State<HomePage> {
                         ),
                         Positioned(
                             top: 15,
-                            right: 30 * widthRadio,
+                            right:
+                                carbonUsage ? 21 * widthRadio : 36 * widthRadio,
                             child: GestureDetector(
                               onTap: () => (this.setState(() {
                                 carbonUsage = false;
@@ -192,7 +197,7 @@ class _HomePageState extends State<HomePage> {
                                   Text('Cloud Usage',
                                       style: carbonUsage
                                           ? AppTheme.roboto14RegularWhite
-                                          : AppTheme.roboto16BoldGreen)
+                                          : AppTheme.roboto14BoldGreen)
                                 ],
                               ),
                             )),
@@ -226,7 +231,7 @@ class _HomePageState extends State<HomePage> {
                                       : SizedBox(width: 4),
                                   Text('Carbon Emission',
                                       style: carbonUsage
-                                          ? AppTheme.roboto16BoldGreen
+                                          ? AppTheme.roboto14BoldGreen
                                           : AppTheme.roboto14RegularWhite)
                                 ],
                               ),
@@ -246,7 +251,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                         Positioned(
-                            left: 198,
+                            left: 198 * widthRadio,
                             top: 60,
                             child: GestureDetector(
                               onTap: () {
@@ -326,7 +331,7 @@ class _HomePageState extends State<HomePage> {
                               ],
                             )),
                         Positioned(
-                            left: 198,
+                            left: 198 * widthRadio,
                             top: 108,
                             child: Row(
                               children: [
@@ -378,7 +383,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                         Positioned(
-                          left: 197,
+                          left: 197 * widthRadio,
                           top: 131,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -401,20 +406,27 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                         Positioned(
-                          left: 331,
-                          top: 133,
-                          child: Container(
-                            width: 24,
-                            height: 24,
-                            decoration: const BoxDecoration(
-                              image: DecorationImage(
-                                image: AssetImage(
-                                    'assets/homepage/arrow_circle_right_green.png'),
-                                fit: BoxFit.cover,
+                            right: 21,
+                            top: 133,
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (context) => DashBoardPage()),
+                                );
+                              },
+                              child: Container(
+                                width: 24,
+                                height: 24,
+                                decoration: const BoxDecoration(
+                                  image: DecorationImage(
+                                    image: AssetImage(
+                                        'assets/homepage/arrow_circle_right_green.png'),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                        ),
+                            )),
                       ],
                     ),
                   ),
@@ -506,13 +518,7 @@ class _HomePageState extends State<HomePage> {
                           detail: '11 related suggestions',
                           linkPage: ApplicationPage(),
                         ),
-                        Container(
-                          height: 0.5,
-                          decoration: BoxDecoration(
-                            color: Colors.grey,
-                            borderRadius: BorderRadius.circular(2),
-                          ),
-                        ),
+                        Dashline(),
                         SuggestionCard(
                           image: 'assets/homepage/battery_1_bar.png',
                           name: 'Other',

@@ -53,13 +53,13 @@ class InformationPageState extends State<InformationPage> {
               Container(
                   height: 28,
                   margin: EdgeInsets.fromLTRB(18, 62, 0, 0),
-                  child: Row(
-                    children: [
-                      GestureDetector(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: Container(
+                  child: GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Row(
+                        children: [
+                          Container(
                             width: 24,
                             height: 24,
                             decoration: const BoxDecoration(
@@ -69,22 +69,22 @@ class InformationPageState extends State<InformationPage> {
                                 fit: BoxFit.cover,
                               ),
                             ),
-                          )),
-                      const SizedBox(
-                        width: 8,
-                      ),
-                      Text(
-                        widget.name,
-                        style: const TextStyle(
-                          color: Color(0xFF072100),
-                          fontSize: 18,
-                          fontFamily: 'Roboto',
-                          fontWeight: FontWeight.w700,
-                          height: 28 / 18,
-                        ),
-                      )
-                    ],
-                  )),
+                          ),
+                          const SizedBox(
+                            width: 8,
+                          ),
+                          Text(
+                            widget.name,
+                            style: const TextStyle(
+                              color: Color(0xFF072100),
+                              fontSize: 18,
+                              fontFamily: 'Roboto',
+                              fontWeight: FontWeight.w700,
+                              height: 28 / 18,
+                            ),
+                          )
+                        ],
+                      ))),
               const SizedBox(
                 height: 18,
               ),
@@ -139,34 +139,34 @@ class InformationPageState extends State<InformationPage> {
                           });
                         },
                         child: Container(
-                      width: 128,
-                      height: 36,
-                      child: Column(
-                        children: [
-                          SizedBox(
-                            width: double.infinity,
-                            child: Text(
-                              widget.tab2Name,
-                              textAlign: TextAlign.center,
-                              style: this.selectedIndex == 1
-                                  ? activateText
-                                  : inActivateText,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          if (this.selectedIndex == 1)
-                            Container(
-                              width: 120,
-                              height: 4,
-                              decoration: ShapeDecoration(
-                                color: Color(0xFF07684B),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(3)),
+                          width: 128,
+                          height: 36,
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                width: double.infinity,
+                                child: Text(
+                                  widget.tab2Name,
+                                  textAlign: TextAlign.center,
+                                  style: this.selectedIndex == 1
+                                      ? activateText
+                                      : inActivateText,
+                                ),
                               ),
-                            )
-                        ],
-                      ),
-                    )),
+                              const SizedBox(height: 8),
+                              if (this.selectedIndex == 1)
+                                Container(
+                                  width: 120,
+                                  height: 4,
+                                  decoration: ShapeDecoration(
+                                    color: Color(0xFF07684B),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(3)),
+                                  ),
+                                )
+                            ],
+                          ),
+                        )),
                   ],
                 ),
               ),

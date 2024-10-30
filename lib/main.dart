@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:clo2/pages/dashboard_page.dart';
 import 'package:clo2/pages/login_page.dart';
 import 'package:clo2/themes/app_theme.dart';
 import 'package:clo2/utils/user_provider.dart';
@@ -91,21 +92,18 @@ class AppContainerState extends State<AppContainer> {
             behavior: customScrollBehavior,
             child: Stack(
               children: [
-                SafeArea(
-                  top: true,
-                  child: Navigator(
-                    pages: [
-                      MaterialPage(child: LoginPage()
-                          // HomePage()
-                          ),
-                    ],
-                    onPopPage: (route, result) {
-                      if (!route.didPop(result)) {
-                        return false;
-                      }
-                      return true;
-                    },
-                  ),
+                Navigator(
+                  pages: [
+                    MaterialPage(child: LoginPage()
+                        // HomePage()
+                        ),
+                  ],
+                  onPopPage: (route, result) {
+                    if (!route.didPop(result)) {
+                      return false;
+                    }
+                    return true;
+                  },
                 ),
                 if (this.drawerVisible)
                   Container(
