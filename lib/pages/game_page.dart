@@ -526,7 +526,7 @@ class _GamePageState extends State<GamePage> {
                       ],
                     ),
                   ))),
-          if (offset > 0)
+          if (offset > 10)
             Positioned(
               top: 453,
               left: 0,

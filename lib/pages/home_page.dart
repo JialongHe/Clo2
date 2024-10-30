@@ -13,6 +13,7 @@ import 'package:clo2/pages/dashboard_page.dart';
 import 'package:clo2/pages/performance_page.dart';
 import 'package:clo2/themes/app_theme.dart';
 import 'package:clo2/utils/android_usuage.dart';
+import 'package:clo2/utils/carbon_calculator.dart';
 import 'package:clo2/utils/co2text.dart';
 import 'package:clo2/utils/google_api_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -29,23 +30,24 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  bool carbonUsage = true;
+  bool cloudData = true;
   ScrollController _scrollController = ScrollController();
   double offset = 0;
   final GoogleApiService _apiService = GoogleApiService();
-  bool _isLoading = true;
-  String? _storageUsage;
+  String? storageUsage;
+  String? netUsage;
+  String? appNetworkUsage;
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-
     if (widget.user != null) {
       _fetchStorageUsageData();
     }
     if (!kIsWeb && Platform.isAndroid) {
       _fetchNetworkUsage();
-      _fetchBatteryInfo();
+      // _fetchBatteryInfo();
     }
 
     _scrollController.addListener(() {
@@ -56,29 +58,29 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _fetchStorageUsageData() async {
-    _storageUsage = await _apiService.fetchStorageUsage(context);
+    storageUsage = await _apiService.fetchStorageUsage(context);
     setState(() {
-      _isLoading = false;
+      isLoading = false;
     });
   }
 
   Future<void> _fetchNetworkUsage() async {
-    final usage = await AndroidUsage.getNetworkUsage();
+    netUsage = await AndroidUsage.getNetworkUsage();
+
+    final int endTime = DateTime.now().millisecondsSinceEpoch;
+    final int startTime = endTime - (24 * 60 * 60 * 1000); // Last 24 hours
+    appNetworkUsage =
+        await AndroidUsage.getAllAppsNetworkUsage(startTime, endTime);
     setState(() {
-      print("network ---------------------");
-      print(usage);
-      // networkUsage = usage;
     });
   }
 
-  Future<void> _fetchBatteryInfo() async {
-    final info = await AndroidUsage.getBatteryInfo();
-    setState(() {
-      print("battery -------------------------");
-      print(info);
-      // batteryInfo = info;
-    });
-  }
+  // Future<void> _fetchBatteryInfo() async {
+  //   final info = await AndroidUsage.getBatteryInfo();
+  //   setState(() {
+  //     // batteryInfo = info;
+  //   });
+  // }
 
   @override
   void dispose() {
@@ -89,12 +91,15 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
     double widthRadio = screenWidth / AppTheme.designWidth;
-    double heightRadio = screenHeight / AppTheme.designHeigh;
-
-    // print(screenWidth);
-    // print(screenHeight);
+    double storageCO2 = storageUsage != null
+        ? CarbonCalculator.convertStorageToCO2(
+            CarbonCalculator.parseTotalUsageFromStorage(storageUsage!))
+        : 0;
+    double netCO2 = netUsage != null
+        ? CarbonCalculator.convertStorageToCO2(
+            CarbonCalculator.parseNetworkTotalUsage(netUsage!))
+        : 0;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -149,14 +154,14 @@ class _HomePageState extends State<HomePage> {
                         ),
                         Positioned(
                           top: 0,
-                          left: carbonUsage ? 0 : null,
-                          right: carbonUsage ? null : 0,
+                          left: cloudData ? 0 : null,
+                          right: cloudData ? null : 0,
                           child: Container(
                             height: 179,
                             width: 376 * widthRadio,
                             decoration: BoxDecoration(
                               image: DecorationImage(
-                                image: carbonUsage
+                                image: cloudData
                                     ? AssetImage('assets/homepage/tab_card.png')
                                     : AssetImage(
                                         'assets/homepage/tab_card2.png'),
@@ -168,34 +173,34 @@ class _HomePageState extends State<HomePage> {
                         Positioned(
                             top: 15,
                             right:
-                                carbonUsage ? 21 * widthRadio : 36 * widthRadio,
+                                cloudData ? 21 * widthRadio : 36 * widthRadio,
                             child: GestureDetector(
                               onTap: () => (this.setState(() {
-                                carbonUsage = false;
+                                cloudData = false;
                               })),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Container(
-                                    height: carbonUsage ? 16 : 18,
-                                    width: carbonUsage ? 16 : 18,
+                                    height: cloudData ? 16 : 18,
+                                    width: cloudData ? 16 : 18,
                                     decoration: BoxDecoration(
                                       image: DecorationImage(
-                                        image: carbonUsage
+                                        image: cloudData
                                             ? AssetImage(
-                                                'assets/homepage/cloud_queue.png')
+                                                'assets/homepage/energy_savings_leaf2.png')
                                             : AssetImage(
-                                                'assets/homepage/cloud_queue2.png'),
+                                                'assets/homepage/energy_savings_leaf.png'),
                                         fit: BoxFit.cover,
                                       ),
                                     ),
                                   ),
-                                  carbonUsage
+                                  cloudData
                                       ? SizedBox(width: 4)
                                       : SizedBox(width: 6),
-                                  Text('Cloud Usage',
-                                      style: carbonUsage
+                                  Text('Data Usage',
+                                      style: cloudData
                                           ? AppTheme.roboto14RegularWhite
                                           : AppTheme.roboto14BoldGreen)
                                 ],
@@ -203,34 +208,34 @@ class _HomePageState extends State<HomePage> {
                             )),
                         Positioned(
                             top: 15,
-                            left: 21 * widthRadio,
+                            left: 22,
                             child: GestureDetector(
                               onTap: () => (this.setState(() {
-                                carbonUsage = true;
+                                cloudData = true;
                               })),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Container(
-                                    height: carbonUsage ? 18 : 16,
-                                    width: carbonUsage ? 18 : 16,
+                                    height: cloudData ? 18 : 16,
+                                    width: cloudData ? 18 : 16,
                                     decoration: BoxDecoration(
                                       image: DecorationImage(
-                                        image: carbonUsage
+                                        image: cloudData
                                             ? AssetImage(
-                                                'assets/homepage/energy_savings_leaf.png')
+                                                'assets/homepage/cloud_queue2.png')
                                             : AssetImage(
-                                                'assets/homepage/energy_savings_leaf2.png'),
+                                                'assets/homepage/cloud_queue.png'),
                                         fit: BoxFit.cover,
                                       ),
                                     ),
                                   ),
-                                  carbonUsage
+                                  cloudData
                                       ? SizedBox(width: 6)
                                       : SizedBox(width: 4),
-                                  Text('Carbon Emission',
-                                      style: carbonUsage
+                                  Text('Cloud Usage',
+                                      style: cloudData
                                           ? AppTheme.roboto14BoldGreen
                                           : AppTheme.roboto14RegularWhite)
                                 ],
@@ -242,7 +247,14 @@ class _HomePageState extends State<HomePage> {
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
-                              Text('4,688', style: AppTheme.roboto28BoldGreen),
+                              cloudData
+                                  ? Text(
+                                      CarbonCalculator.formatCO2Output(
+                                          storageCO2),
+                                      style: AppTheme.roboto28BoldGreen)
+                                  : Text(
+                                      CarbonCalculator.formatCO2Output(netCO2),
+                                      style: AppTheme.roboto28BoldGreen),
                               SizedBox(
                                 width: 4,
                               ),
@@ -250,161 +262,259 @@ class _HomePageState extends State<HomePage> {
                             ],
                           ),
                         ),
-                        Positioned(
-                            left: 198 * widthRadio,
-                            top: 60,
-                            child: GestureDetector(
-                              onTap: () {
-                                final appState =
-                                    context.findAncestorStateOfType<
-                                        AppContainerState>();
-
-                                if (appState != null) {
-                                  appState.toggleDrawer();
-                                  appState.updateDrawer(Container(
-                                      margin: const EdgeInsets.fromLTRB(
-                                          20, 24, 20, 0),
-                                      child: PerformancePage()));
-                                }
-                              },
-                              child: SizedBox(
-                                height: 36,
-                                child: Row(children: [
-                                  Text('B', style: AppTheme.roboto28BoldGreen),
-                                  const SizedBox(
-                                    width: 6,
-                                  ),
-                                  const Text(
-                                    'Level',
-                                    style: TextStyle(
-                                      color: Color(0xFF07684B),
-                                      fontSize: 12,
-                                      fontFamily: 'Roboto',
-                                      fontWeight: FontWeight.w400,
+                        if (cloudData) ...[
+                          const Positioned(
+                              left: 21,
+                              top: 105,
+                              child: Text(
+                                'Storage',
+                                style: TextStyle(
+                                  color: Color(0xFF8A8B87),
+                                  fontSize: 14,
+                                  fontFamily: 'Roboto',
+                                  fontWeight: FontWeight.w400,
+                                  height: 20 / 14,
+                                ),
+                              )),
+                          Positioned(
+                              left: 21,
+                              top: 132,
+                              child: Container(
+                                height: 28,
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      storageUsage != null
+                                          ? CarbonCalculator.formatCO2Output(
+                                              CarbonCalculator.convertStorageToGB(
+                                                  CarbonCalculator
+                                                      .parseTotalUsageFromStorage(
+                                                          storageUsage!)))
+                                          : "0",
+                                      style: const TextStyle(
+                                        color: Color(0xFF07684B),
+                                        fontSize: 18,
+                                        fontFamily: 'Roboto',
+                                        fontWeight: FontWeight.w600,
+                                        height: 28 / 18,
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(
-                                    width: 6,
-                                  ),
+                                    const SizedBox(width: 4),
+                                    const Text(
+                                      'GB',
+                                      style: TextStyle(
+                                        color: Color(0xFF07684B),
+                                        fontSize: 12,
+                                        fontFamily: 'Roboto',
+                                        fontWeight: FontWeight.w400,
+                                        height: 14 / 12,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )),
+                          Positioned(
+                              top: 105,
+                              left: 183.1 * widthRadio,
+                              child: const Text(
+                                'Eco Performance',
+                                style: TextStyle(
+                                  color: Color(0xFF8A8B87),
+                                  fontSize: 14,
+                                  fontFamily: 'Roboto',
+                                  fontWeight: FontWeight.w400,
+                                  height: 20 / 14,
+                                ),
+                              )),
+                          Positioned(
+                              left: 183.1 * widthRadio,
+                              top: 126,
+                              child: GestureDetector(
+                                onTap: () {
+                                  final appState =
+                                      context.findAncestorStateOfType<
+                                          AppContainerState>();
+
+                                  if (appState != null) {
+                                    appState.toggleDrawer();
+                                    appState.updateDrawer(Container(
+                                        margin: const EdgeInsets.fromLTRB(
+                                            20, 24, 20, 0),
+                                        child: PerformancePage()));
+                                  }
+                                },
+                                child: SizedBox(
+                                  height: 36,
+                                  child: Row(children: [
+                                    Text('A',
+                                        style: AppTheme.roboto28BoldGreen),
+                                    const SizedBox(
+                                      width: 6,
+                                    ),
+                                    const Text(
+                                      'Level',
+                                      style: TextStyle(
+                                        color: Color(0xFF07684B),
+                                        fontSize: 12,
+                                        fontFamily: 'Roboto',
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 6,
+                                    ),
+                                    Container(
+                                      width: 18,
+                                      height: 18,
+                                      decoration: const BoxDecoration(
+                                        image: DecorationImage(
+                                          image: AssetImage(
+                                              'assets/homepage/error.png'),
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    )
+                                  ]),
+                                ),
+                              )),
+                        ],
+                        if (!cloudData) ...[
+                          Positioned(
+                              left: 21,
+                              top: 108,
+                              child: Row(
+                                children: [
                                   Container(
-                                    width: 18,
-                                    height: 18,
+                                    width: 16,
+                                    height: 16,
                                     decoration: const BoxDecoration(
                                       image: DecorationImage(
                                         image: AssetImage(
-                                            'assets/homepage/error.png'),
+                                            'assets/homepage/cloud_download.png'),
                                         fit: BoxFit.cover,
                                       ),
                                     ),
+                                  ),
+                                  SizedBox(
+                                    width: 4,
+                                  ),
+                                  const Text(
+                                    'Download',
+                                    style: TextStyle(
+                                      color: Color(0xFF8A8B87),
+                                      fontSize: 14,
+                                      fontFamily: 'Roboto',
+                                      fontWeight: FontWeight.w400,
+                                    ),
                                   )
-                                ]),
-                              ),
-                            )),
-                        Positioned(
+                                ],
+                              )),
+                          Positioned(
+                              left: 198 * widthRadio,
+                              top: 108,
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 16,
+                                    height: 16,
+                                    decoration: const BoxDecoration(
+                                      image: DecorationImage(
+                                        image: AssetImage(
+                                            'assets/homepage/cloud_upload.png'),
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 4,
+                                  ),
+                                  const Text(
+                                    'Upload',
+                                    style: TextStyle(
+                                      color: Color(0xFF8A8B87),
+                                      fontSize: 14,
+                                      fontFamily: 'Roboto',
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  )
+                                ],
+                              )),
+                          Positioned(
                             left: 21,
-                            top: 108,
+                            top: 131,
                             child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
-                                Container(
-                                  width: 16,
-                                  height: 16,
-                                  decoration: const BoxDecoration(
-                                    image: DecorationImage(
-                                      image: AssetImage(
-                                          'assets/homepage/cloud_download.png'),
-                                      fit: BoxFit.cover,
-                                    ),
+                                Text(
+                                  netUsage != null
+                                      ? CarbonCalculator.formatCO2Output(
+                                          CarbonCalculator.convertStorageToGB(
+                                              CarbonCalculator
+                                                  .parseNetworkDownload(
+                                                      netUsage!)))
+                                      : "0",
+                                  style: TextStyle(
+                                    color: Color(0xFF07684B),
+                                    fontSize: 18,
+                                    fontFamily: 'Roboto',
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 4,
                                 ),
                                 const Text(
-                                  'Download',
+                                  'GB',
                                   style: TextStyle(
-                                    color: Color(0xFF8A8B87),
-                                    fontSize: 14,
+                                    color: Color(0xFF07684B),
+                                    fontSize: 12,
                                     fontFamily: 'Roboto',
                                     fontWeight: FontWeight.w400,
-                                  ),
-                                )
-                              ],
-                            )),
-                        Positioned(
-                            left: 198 * widthRadio,
-                            top: 108,
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: 16,
-                                  height: 16,
-                                  decoration: const BoxDecoration(
-                                    image: DecorationImage(
-                                      image: AssetImage(
-                                          'assets/homepage/cloud_upload.png'),
-                                      fit: BoxFit.cover,
-                                    ),
+                                    height: 14 / 12,
                                   ),
                                 ),
-                                SizedBox(
+                              ],
+                            ),
+                          ),
+                          Positioned(
+                            left: 197 * widthRadio,
+                            top: 131,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  netUsage != null
+                                      ? CarbonCalculator.formatCO2Output(
+                                          CarbonCalculator.convertStorageToGB(
+                                              CarbonCalculator
+                                                  .parseNetworkUpload(
+                                                      netUsage!)))
+                                      : "0",
+                                  style: const TextStyle(
+                                    color: Color(0xFF07684B),
+                                    fontSize: 18,
+                                    fontFamily: 'Roboto',
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                const SizedBox(
                                   width: 4,
                                 ),
                                 const Text(
-                                  'Upload',
+                                  'GB',
                                   style: TextStyle(
-                                    color: Color(0xFF8A8B87),
-                                    fontSize: 14,
+                                    color: Color(0xFF07684B),
+                                    fontSize: 12,
                                     fontFamily: 'Roboto',
                                     fontWeight: FontWeight.w400,
+                                    height: 14 / 12,
                                   ),
-                                )
+                                ),
                               ],
-                            )),
-                        Positioned(
-                          left: 21,
-                          top: 131,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(
-                                '2,000',
-                                style: TextStyle(
-                                  color: Color(0xFF07684B),
-                                  fontSize: 18,
-                                  fontFamily: 'Roboto',
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              SizedBox(
-                                width: 4,
-                              ),
-                              Co2text(),
-                            ],
+                            ),
                           ),
-                        ),
-                        Positioned(
-                          left: 197 * widthRadio,
-                          top: 131,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(
-                                '2,688',
-                                style: TextStyle(
-                                  color: Color(0xFF07684B),
-                                  fontSize: 18,
-                                  fontFamily: 'Roboto',
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              SizedBox(
-                                width: 4,
-                              ),
-                              Co2text(),
-                            ],
-                          ),
-                        ),
+                        ],
                         Positioned(
                             right: 21,
                             top: 133,
@@ -412,7 +522,11 @@ class _HomePageState extends State<HomePage> {
                               onTap: () {
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
-                                      builder: (context) => DashBoardPage()),
+                                      builder: (context) => DashBoardPage(
+                                            appNetworkUsage: appNetworkUsage!,
+                                            storageUsage: storageUsage!,
+                                            netUsage: netUsage!,
+                                          )),
                                 );
                               },
                               child: Container(
@@ -434,7 +548,7 @@ class _HomePageState extends State<HomePage> {
                     height: 15,
                   ),
                   Container(
-                    height: 138,
+                    height: 169,
                     padding: EdgeInsets.symmetric(horizontal: 18),
                     child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
@@ -443,8 +557,11 @@ class _HomePageState extends State<HomePage> {
                           CarouselCard(
                               image: 'assets/homepage/car.png',
                               details:
-                                  'It is estimated a small car’s carbon emission',
-                              number: '2000',
+                                  'It is estimated a small car’s carbon emission.',
+                              number: CarbonCalculator.formatCO2Output(
+                                  (cloudData ? storageCO2 : netCO2) /
+                                      1000 *
+                                      4.59),
                               unit: 'Km'),
                           SizedBox(
                             width: 12,
@@ -452,18 +569,36 @@ class _HomePageState extends State<HomePage> {
                           CarouselCard(
                               image: 'assets/homepage/food.png',
                               details:
-                                  'It is estimated eqaul to one meal with beef',
-                              number: '15.9',
+                                  'It is estimated eqaul to one meal with beef.',
+                              number: CarbonCalculator.formatCO2Output(
+                                  (cloudData ? storageCO2 : netCO2) /
+                                      1000 *
+                                      0.14),
                               unit: 'Kg / beef'),
                           SizedBox(
                             width: 12,
                           ),
                           CarouselCard(
-                              image: 'assets/homepage/food.png',
+                              image: 'assets/homepage/water.png',
                               details:
-                                  'It is estimated eqaul to one meal with beef',
-                              number: '15.9',
-                              unit: 'Kg / beef'),
+                                  'It is estimated produce every bottled water.',
+                              number: CarbonCalculator.formatCO2Output(
+                                  (cloudData ? storageCO2 : netCO2) /
+                                      1000 *
+                                      3.75),
+                              unit: 'Liter'),
+                          SizedBox(
+                            width: 12,
+                          ),
+                          CarouselCard(
+                              image: 'assets/homepage/video.png',
+                              details:
+                                  'It is estimated eqaul to hours of video stream.',
+                              number: CarbonCalculator.formatCO2Output(
+                                  (cloudData ? storageCO2 : netCO2) /
+                                      1000 *
+                                      4.52),
+                              unit: 'Hours'),
                         ],
                       ),
                     ),
@@ -533,7 +668,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ],
               )),
-          if (offset > 0)
+          if (offset > 10)
             Positioned(
               top: 0,
               left: 0,

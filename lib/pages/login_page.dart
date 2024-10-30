@@ -104,7 +104,7 @@ class _LoginPageState extends State<LoginPage> {
 
               if (user != null) {
                 Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => HomePage()),
+                  MaterialPageRoute(builder: (context) => HomePage(user: user,)),
                 );
               }
             },

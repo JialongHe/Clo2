@@ -16,8 +16,8 @@ class CarouselCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 146,
-      height: 122,
+      width: 156,
+      height: 169,
       padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
       decoration: ShapeDecoration(
         color: Colors.white,
@@ -27,8 +27,8 @@ class CarouselCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 24,
-            height: 24,
+            width: 44,
+            height: 44,
             decoration: BoxDecoration(
               image: DecorationImage(
                 image: AssetImage(image),
@@ -64,18 +64,18 @@ class CarouselCard extends StatelessWidget {
             ),
           ),
           SizedBox(
-            width: 146,
-            height: 46,
+            width: 156,
+            height: 69,
             child: Text(
               details,
-              maxLines: 2,
+              maxLines: 3,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
-                color: Color(0xFF8A8B87),
-                fontSize: 14,
-                fontFamily: 'Roboto',
-                fontWeight: FontWeight.w400,
-              ),
+                  color: Color(0xFF8A8B87),
+                  fontSize: 14,
+                  fontFamily: 'Roboto',
+                  fontWeight: FontWeight.w400,
+                  height: 23 / 14),
             ),
           )
         ],

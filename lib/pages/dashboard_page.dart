@@ -1,13 +1,23 @@
+import 'dart:convert';
+
 import 'package:clo2/components/dashline.dart';
 import 'package:clo2/components/data_card.dart';
 import 'package:clo2/components/filter_bar.dart';
 import 'package:clo2/components/usage_card.dart';
 import 'package:clo2/themes/app_theme.dart';
+import 'package:clo2/utils/carbon_calculator.dart';
 import 'package:clo2/utils/co2text.dart';
 import 'package:flutter/material.dart';
 
 class DashBoardPage extends StatefulWidget {
-  DashBoardPage();
+  String storageUsage;
+  String netUsage;
+  String appNetworkUsage;
+
+  DashBoardPage(
+      {required this.appNetworkUsage,
+      required this.netUsage,
+      required this.storageUsage});
 
   @override
   _DashBoardPageState createState() => _DashBoardPageState();
@@ -16,6 +26,45 @@ class DashBoardPage extends StatefulWidget {
 class _DashBoardPageState extends State<DashBoardPage> {
   ScrollController _scrollController = ScrollController();
   double offset = 0;
+  String? storageUsage;
+  String? netUsage;
+  String? appNetworkUsage;
+  dynamic top10Apps;
+
+  @override
+  void initState() {
+    super.initState();
+
+    this.storageUsage = widget.storageUsage;
+    this.netUsage = widget.netUsage;
+    this.appNetworkUsage = widget.appNetworkUsage;
+    _scrollController.addListener(() {
+      setState(() {
+        offset = _scrollController.offset;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void calculateAndRankTopUsage(List appNetworkUsage) {
+    for (var app in appNetworkUsage) {
+      app['totalUsage'] = app['mobileUsage'] + app['wifiUsage'];
+    }
+
+    appNetworkUsage.sort((a, b) => b['totalUsage'].compareTo(a['totalUsage']));
+
+    top10Apps = appNetworkUsage.take(10).map((entry) {
+      return {
+        "appName": entry["appName"],
+        "totalUsage": entry["totalUsage"],
+      };
+    }).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,21 +72,29 @@ class _DashBoardPageState extends State<DashBoardPage> {
     double screenHeight = MediaQuery.of(context).size.height;
     double widthRadio = screenWidth / AppTheme.designWidth;
 
-    @override
-    void initState() {
-      super.initState();
-      _scrollController.addListener(() {
-        setState(() {
-          offset = _scrollController.offset;
-        });
-      });
-    }
+    double storageCO2 = storageUsage != null
+        ? CarbonCalculator.convertStorageToCO2(
+            CarbonCalculator.parseTotalUsageFromStorage(storageUsage!))
+        : 0;
+    double netCO2 = netUsage != null
+        ? CarbonCalculator.convertStorageToCO2(
+            CarbonCalculator.parseNetworkTotalUsage(netUsage!))
+        : 0;
 
-    @override
-    void dispose() {
-      _scrollController.dispose();
-      super.dispose();
-    }
+    List driveCO2 = storageUsage != null
+        ? [
+            CarbonCalculator.convertStorageToCO2(
+                CarbonCalculator.parseDriveUsageFromStorage(storageUsage!)),
+            CarbonCalculator.convertStorageToCO2(
+                CarbonCalculator.parseDriveTrashUsageFromStorage(
+                    storageUsage!)),
+            CarbonCalculator.convertStorageToCO2(
+                CarbonCalculator.parseGmailUsageFromStorage(storageUsage!)),
+          ]
+        : [0, 0, 0];
+
+    calculateAndRankTopUsage(
+        appNetworkUsage != null ? jsonDecode(appNetworkUsage!) : []);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -204,25 +261,26 @@ class _DashBoardPageState extends State<DashBoardPage> {
                               ),
                               Positioned(
                                   top: 70,
-                                  left: 135,
+                                  left: 130,
                                   child: Container(
-                                    width: 62,
+                                    width: 69,
                                     height: 48,
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.center,
                                       children: [
                                         Text(
-                                          '4,688',
-                                          style: TextStyle(
+                                          CarbonCalculator.formatCO2Output(
+                                              storageCO2 + netCO2),
+                                          style: const TextStyle(
                                             color: Colors.black,
-                                            fontSize: 24,
+                                            fontSize: 18,
                                             fontFamily: 'Roboto',
                                             fontWeight: FontWeight.w700,
-                                            height: 28 / 24,
+                                            height: 24 / 18,
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 4,
                                         ),
                                         Co2text()
@@ -238,7 +296,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Text(
+                                        const Text(
                                           'Data\nTransmission',
                                           style: TextStyle(
                                             color: Color(0xFF072100),
@@ -256,7 +314,8 @@ class _DashBoardPageState extends State<DashBoardPage> {
                                           child: Row(
                                             children: [
                                               Text(
-                                                '2,688',
+                                                CarbonCalculator
+                                                    .formatCO2Output(netCO2),
                                                 style: TextStyle(
                                                   color: Color(0xFF072100),
                                                   fontSize: 16,
@@ -309,7 +368,9 @@ class _DashBoardPageState extends State<DashBoardPage> {
                                                 MainAxisAlignment.end,
                                             children: [
                                               Text(
-                                                '2,000',
+                                                CarbonCalculator
+                                                    .formatCO2Output(
+                                                        storageCO2),
                                                 style: TextStyle(
                                                   color: Color(0xFF072100),
                                                   fontSize: 16,
@@ -362,7 +423,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
                                           child: Row(
                                             children: [
                                               Text(
-                                                '200',
+                                                '0',
                                                 style: TextStyle(
                                                   color: Color(0xFF072100),
                                                   fontSize: 16,
@@ -487,34 +548,46 @@ class _DashBoardPageState extends State<DashBoardPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               UsageCard(
-                                  usage: "1200",
-                                  name: "Cloud Storages",
-                                  percent: 0.5,
-                                  bold: true),
-                              SizedBox(
-                                height: 4,
+                                usage: CarbonCalculator.formatCO2Output(
+                                    storageCO2),
+                                name: "Total",
+                                percent: 1,
+                                bold: true,
                               ),
-                              UsageCard(
-                                  usage: "2400",
-                                  name: "Cloud Transmission",
-                                  percent: 1,
-                                  bold: false),
-                              SizedBox(
-                                height: 4,
-                              ),
-                              UsageCard(
-                                  usage: "2400",
-                                  name: "Cloud Transmission",
-                                  percent: 1,
-                                  bold: false),
-                              SizedBox(
-                                height: 4,
-                              ),
-                              UsageCard(
-                                  usage: "2400",
-                                  name: "Cloud Transmission",
-                                  percent: 1,
-                                  bold: false),
+                              const SizedBox(height: 4),
+                              ...() {
+                                // Pair each driveCO2 value with a name
+                                List<Map<String, dynamic>> dataList = [
+                                  {"name": "Google Drive", "co2": driveCO2[0]},
+                                  {
+                                    "name": "Google Drive Trash",
+                                    "co2": driveCO2[1]
+                                  },
+                                  {"name": "Gmail", "co2": driveCO2[2]},
+                                ];
+
+                                // Sort by the CO2 values in descending order
+                                dataList.sort(
+                                    (a, b) => b["co2"].compareTo(a["co2"]));
+
+                                // Generate UsageCards with SizedBoxes between them
+                                return List.generate(dataList.length * 2 - 1,
+                                    (index) {
+                                  if (index.isOdd) {
+                                    return const SizedBox(height: 4);
+                                  } else {
+                                    int dataIndex = index ~/ 2;
+                                    return UsageCard(
+                                      usage: CarbonCalculator.formatCO2Output(
+                                          dataList[dataIndex]["co2"]),
+                                      name: dataList[dataIndex]["name"],
+                                      percent: dataList[dataIndex]["co2"] /
+                                          storageCO2,
+                                      bold: false,
+                                    );
+                                  }
+                                });
+                              }(),
                             ],
                           ),
                         ),
@@ -554,41 +627,39 @@ class _DashBoardPageState extends State<DashBoardPage> {
                           height: 12,
                         ),
                         Container(
-                          height: 464,
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          decoration: ShapeDecoration(
-                            color: Colors.white,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8)),
-                          ),
-                          child: Column(
-                            children: [
-                              DataCard(
-                                name: "Google Drive",
-                                bandWith: "1200",
-                              ),
-                              Dashline(),
-                              DataCard(
-                                name: "Spotify",
-                                bandWith: "1600",
-                              ),
-                              Dashline(),
-                              DataCard(
-                                name: "Spotify",
-                                bandWith: "1600",
-                              ),
-                              Dashline(),
-                              DataCard(
-                                name: "Spotify",
-                                bandWith: "1600",
-                              ),
-                            ],
-                          ),
-                        )
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 8, horizontal: 16),
+                            decoration: ShapeDecoration(
+                              color: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8)),
+                            ),
+                            child: top10Apps != null
+                                ? Column(
+                                    children: List.generate(
+                                        top10Apps.length * 2 - 1, (index) {
+                                      if (index.isOdd) {
+                                        return Dashline();
+                                      } else {
+                                        int dataIndex = index ~/ 2;
+                                        double gb =
+                                            CarbonCalculator.convertStorageToGB(
+                                                double.parse(
+                                                    top10Apps[dataIndex]
+                                                            ["totalUsage"]
+                                                        .toString()));
+                                        return DataCard(
+                                          name: top10Apps[dataIndex]["appName"],
+                                          bandWidth: gb,
+                                        );
+                                      }
+                                    }),
+                                  )
+                                : Container())
                       ],
                     ),
                   )),
-              if (offset > 0)
+              if (offset > 10)
                 Positioned(
                   top: 0,
                   left: 0,
