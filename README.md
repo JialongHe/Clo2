@@ -25,7 +25,7 @@ To get started with Clo2:
     ```bash
     flutter pub get
 
-3. **Set up Firebase and Google API keys (required for login and data services).**:
+3. **Set up Firebase and Google API keys (required for login and data services)**:
 
 4. **Run the app**:
     ```bash
