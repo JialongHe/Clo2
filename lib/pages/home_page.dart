@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 
@@ -37,13 +38,16 @@ class _HomePageState extends State<HomePage> {
   String? storageUsage;
   String? netUsage;
   String? appNetworkUsage;
-  bool isLoading = true;
+  Timer? _storageUpdateTimer;
 
   @override
   void initState() {
     super.initState();
     if (widget.user != null) {
       _fetchStorageUsageData();
+      _storageUpdateTimer = Timer.periodic(Duration(seconds: 30), (timer) {
+        _fetchStorageUsageData();
+      });
     }
     if (!kIsWeb && Platform.isAndroid) {
       _fetchNetworkUsage();
@@ -53,6 +57,7 @@ class _HomePageState extends State<HomePage> {
     _scrollController.addListener(() {
       setState(() {
         offset = _scrollController.offset;
+        _storageUpdateTimer?.cancel();
       });
     });
   }
@@ -60,7 +65,6 @@ class _HomePageState extends State<HomePage> {
   Future<void> _fetchStorageUsageData() async {
     storageUsage = await _apiService.fetchStorageUsage(context);
     setState(() {
-      isLoading = false;
     });
   }
 
